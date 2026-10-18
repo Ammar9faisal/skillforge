@@ -9,3 +9,8 @@ backend/data/
 *.log
 .DS_Store
 *.tsbuildinfo
+native/macos-camera/.build/
+backend/.env.example
+artifacts/
+
+scripts/.build/

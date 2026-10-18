@@ -8,13 +8,17 @@ from pydantic import BaseModel, Field
 
 from .config import Settings
 from .services.camera import CameraUnavailable, OpenCVCamera
+from .services.camera_router import CameraRouter
 from .services.storage import StorageError, TaskStore
 from .services.gemini import GeminiError, GeminiService
 from .services.verification import VerificationService
+from .services.received_camera import BridgeError, ReceivedCamera
+from .routes.camera_bridge import router as bridge_router
 from .routes.tasks import router as tasks_router
 
 settings = Settings()
-camera = OpenCVCamera(settings.camera_index, settings.camera_width, settings.camera_height)
+whatsapp = ReceivedCamera()
+camera = CameraRouter(OpenCVCamera(settings.camera_index, settings.camera_width, settings.camera_height), whatsapp, settings.camera_source)
 
 
 @asynccontextmanager
@@ -31,7 +35,9 @@ app.state.camera = camera
 app.state.store = TaskStore(settings.data_dir)
 app.state.gemini = GeminiService(settings)
 app.state.verification = VerificationService()
+app.state.whatsapp = whatsapp
 app.include_router(tasks_router)
+app.include_router(bridge_router)
 app.add_middleware(CORSMiddleware, allow_origins=[settings.frontend_origin, 'http://127.0.0.1:3000'], allow_methods=['GET', 'POST', 'PATCH', 'PUT', 'DELETE'], allow_headers=['Content-Type'])
 
 
@@ -42,6 +48,11 @@ async def storage_error(request, exc):
 
 @app.exception_handler(GeminiError)
 async def gemini_error(request, exc):
+    return JSONResponse(status_code=exc.status_code, content={'detail': str(exc)})
+
+
+@app.exception_handler(BridgeError)
+async def bridge_error(request, exc):
     return JSONResponse(status_code=exc.status_code, content={'detail': str(exc)})
 
 
@@ -79,9 +90,10 @@ def reconnect(selection: CameraSelection):
 
 
 @app.get('/api/camera/frame')
-def frame():
+def frame(preview: bool = False):
     try:
-        return Response(camera.jpeg(), media_type='image/jpeg', headers={'Cache-Control': 'no-store'})
+        jpeg = camera.jpeg(quality=80, max_width=960) if preview else camera.jpeg()
+        return Response(jpeg, media_type='image/jpeg', headers={'Cache-Control': 'no-store'})
     except CameraUnavailable as exc:
         raise HTTPException(503, str(exc)) from exc
 

@@ -208,3 +208,6 @@ button, .button { min-height: 36px; }
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .camera-sweep { display: none !important; }
 }
+
+.camera-controls select { max-width:100%; background:#090f15; border:1px solid #30414e; border-radius:4px; padding:8px; color:#e2edf5; font:inherit; }
+.camera-controls select:focus-visible { outline:2px solid var(--cyan); outline-offset:3px; }

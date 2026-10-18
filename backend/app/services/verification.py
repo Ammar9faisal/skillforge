@@ -97,6 +97,7 @@ class VerificationService:
             state['busy'] = True
         try:
             try:
+                source_revision = getattr(camera, 'source_revision', None)
                 learner = camera.jpeg()
             except CameraUnavailable as exc:
                 raise HTTPException(503, str(exc)) from exc
@@ -105,6 +106,8 @@ class VerificationService:
                 raise HTTPException(413, 'Images are too large. Reduce camera resolution before verifying.')
             result, model = gemini.verify_images(step, reference, learner)
             with self.lock, store.lock:
+                if isinstance(source_revision, tuple) and camera.source_revision != source_revision:
+                    raise HTTPException(409, 'Camera source changed during verification. Result discarded; verify again.')
                 current = self._task(store, task_id)
                 if current.updated_at != task.updated_at or state['revision'] != revision:
                     raise HTTPException(409, 'Task or session changed during verification. Result discarded; no progress changed.')

@@ -9,7 +9,7 @@ Implement and test one milestone at a time. Never simulate live AI results.
 - [x] 5. Verify: real image comparison, PASS/FAIL/UNCERTAIN, advance only on PASS.
 - [x] 6. Polish: responsive HUD, comparison, accessible loading and errors.
 - [ ] 7. Reliability: focused automated tests, two real end-to-end runs, backup demo.
-- [ ] 8. Pitch: honest limitations, demo script, Devpost draft and setup documentation.
+- [x] 8. Pitch: honest limitations, demo script, Devpost draft and setup documentation.
 
 ## Verification log
 
@@ -88,3 +88,26 @@ Implement and test one milestone at a time. Never simulate live AI results.
 - Safari reviewed the saved controller tutorial at laptop and 390-pixel narrow viewports. A fresh real camera/Gemini verification returned UNCERTAIN because the controller was absent, showed the specific feedback and exact image pair, and kept step 1 active at 0/4. Enlarged comparison displayed both real images; Escape dismissal was verified at laptop size and the named Close control at narrow size. No fake assessments were introduced.
 - 84 backend tests and 8 frontend tests pass. TypeScript and production build pass. No backend behavior or dependencies changed. Existing Starlette test-client deprecation warning remains.
 - Updated README and Copilot handoff. No blockers for Milestone 6. Next: Milestone 7, two complete physical runs, restart/reconnect/error checks and a backup demo recording; those reliability checks are still outstanding.
+
+### Native Ray-Bans camera extension — October 18, 2026
+
+Added a documented ScreenCaptureKit Swift CLI with window selection, configurable crop, JPEG snapshots and bounded-rate loopback forwarding. Integrated a fresh-frame receiver and shared camera router with USB / WhatsApp selection in Teach and Learn. Real incoming video, 2 FPS uploads, common preview, a disposable Teach capture and camera 0 regression passed. Verify source routing and in-flight source changes have automated coverage. Deliberate overlap test skipped at the user’s request. Full evidence and limitations: native/macos-camera/PLAN.md. Original milestones 7–8 remain separate.
+
+### GoPro read interruption fix — October 18, 2026
+
+HERO9 Black was identified at OpenCV index 1. A one-frame probe succeeded but did not establish reliability. Two fresh-process eight-second tests (native resolution and requested 720p) each delivered over 100 frames at 1920 × 1080 and one missed read. The original reader treated the first miss as fatal. Added a five-second initial-frame grace period and retries bounded by three seconds after the most recent success; stale frames remain unavailable. Added regression tests for temporary read recovery, initial-frame timeout and sustained dropout invalidation. All 113 backend tests pass. The backend was restarted for a sustained app-level live check.
+
+Live app-level validation after restart: index 1 stayed available at 1920 × 1080 throughout a 30-second poll, with 27 valid JPEG responses and zero failures after startup. Left the backend running with GoPro selected.
+
+### Milestone 8 — prepared October 18, 2026
+
+- Added docs/DEMO_SCRIPT.md: 90-second operator/narration timeline using an explicitly pre-generated tutorial, actual-result branches for uncertainty/unexpected output/latency, and a longer full-workflow rehearsal plus backup recording shot list.
+- Added docs/PITCH.md: one-sentence and 30-second pitches, social-impact and healthier-working-life framing, Gemini’s role, and judge Q&A grounded in implemented behavior and measured limitations.
+- Added docs/DEVPOST.md: submission-ready narrative sections, stack, challenges, accomplishments, next work, honest validation boundaries and explicit team/repository/video fields to fill. Draft only; no external submission or deployment.
+- Added docs/SETUP.md: non-overwriting first-time environment setup, separate daily launch, camera configuration, GoPro index/recovery caveats, Ray-Ban permissions/crop/launch, image disclosures, diagnostics and test commands. Linked all deliverables from README and updated its stale project-status text.
+- Reviewed claims against code and existing validation logs; checked local Markdown links, shell-block syntax and timed-script word count. This milestone changes documentation only, makes no inference requests, changes no saved task data and does not rerun hardware or reliability checks.
+- Milestone 7 remains unchecked. Two full physical runs and the actual backup video are not completed by writing the demo materials. User/team must add submission identity/links before publishing; preparing a draft did not authorize publishing it.
+
+### Preview FPS follow-up — October 18, 2026
+
+The milestone 7 browser workaround waited 500 ms after every full-resolution JPEG request, limiting all camera previews to under 2 FPS. USB / GoPro preview now targets 15 FPS, subtracting request time from the frame interval; WhatsApp preview stays at 2 FPS. A preview-only JPEG option reduces width to at most 960 pixels and quality to 80 without changing Teach/Verify input resolution. Three new regression cases verify landscape/portrait resizing, no upscaling, unchanged full-size output and source-frame preservation. All 116 backend tests and eight frontend tests pass; TypeScript checks pass. Servers remain stopped following the user’s shutdown request; live FPS is not measured by these tests.

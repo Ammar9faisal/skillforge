@@ -145,3 +145,40 @@ def test_failed_retry_preserves_previous_real_feedback(v):
     state = v.service.sessions[v.session['session_id']]
     assert state['last'] == {**first, 'assessed_at': state['last']['assessed_at']}
     assert state['completed'] == []
+
+@pytest.mark.parametrize('source', ['webcam', 'whatsapp'])
+def test_verify_uses_selected_camera_source(v, source):
+    import time
+    from app.services.camera_router import CameraRouter
+    from app.services.received_camera import ReceivedCamera
+    incoming = ReceivedCamera()
+    lease = incoming.start_bridge(123, (0, 0, 1, 1), 2)
+    incoming.receive(v.learner, lease['upload_token'], 1, time.time())
+    webcam = Mock(index=0)
+    webcam.get_latest_frame.return_value = cv2.imdecode(np.frombuffer(v.reference, np.uint8), cv2.IMREAD_COLOR)
+    app.state.camera = CameraRouter(webcam, incoming, source)
+    response = verify(v)
+    assert response.status_code == 200, response.text
+    jpeg = base64.b64decode(response.json()['last_result']['learner_data_url'].split(',')[1])
+    assert cv2.imdecode(np.frombuffer(jpeg, np.uint8), cv2.IMREAD_COLOR).mean() == (180 if source == 'whatsapp' else 0)
+
+
+def test_source_change_discards_verification(v):
+    v.camera.source_revision = (0, 0)
+    def change(**kwargs):
+        v.camera.source_revision = (1, 0)
+        return SimpleNamespace(text=json.dumps(v.output))
+    v.sdk.models.generate_content.side_effect = change
+    assert verify(v).status_code == 409
+    assert v.service.sessions[v.session['session_id']]['completed'] == []
+
+
+def test_stale_rayban_source_does_not_call_gemini(v):
+    from app.services.camera_router import CameraRouter
+    from app.services.received_camera import ReceivedCamera
+    incoming = ReceivedCamera()
+    incoming.start_bridge(123, (0, 0, 1, 1), 2)
+    app.state.camera = CameraRouter(Mock(), incoming, 'whatsapp')
+    assert verify(v).status_code == 503
+    v.factory.assert_not_called()
+    assert v.service.sessions[v.session['session_id']]['completed'] == []

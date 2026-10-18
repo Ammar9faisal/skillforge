@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', extra='ignore')
+    camera_source: Literal['webcam', 'whatsapp'] = 'webcam'
     camera_index: int = Field(default=0, ge=0, le=20)
     camera_width: int = Field(default=1280, ge=320, le=4096)
     camera_height: int = Field(default=720, ge=240, le=2160)

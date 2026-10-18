@@ -1,16 +1,16 @@
 # SkillForge — Copilot handoff
 
-Last updated October 17, 2026. Continue the existing application; do not scaffold a replacement.
+Last updated October 18, 2026. Continue the existing application; do not scaffold a replacement.
 
 ## Objective and current milestone
 
 SkillForge turns camera checkpoints of a physical demonstration into a Gemini tutorial, then compares a learner's camera image with each instructor reference. Stack: Next.js App Router, React, TypeScript, Tailwind, Lucide; FastAPI, OpenCV, Pydantic, official google-genai SDK; local JSON/JPEG task storage. Localhost hackathon MVP, no auth/cloud/database required.
 
-Milestones 1–6 are implemented and verified. Read PLAN.md for the evidence and README.md for startup, API behavior and manual checklists. Next is milestone 7 (demo reliability), followed by milestone 8 (pitch). Work one milestone at a time and report what was implemented, tested, remaining and blocked.
+Milestones 1–6 are implemented and verified. Read PLAN.md for the evidence and README.md for startup, API behavior and manual checklists. Milestone 8’s documentation pack is now prepared; milestone 7 (demo reliability) remains next. Work one milestone at a time and report what was implemented, tested, remaining and blocked.
 
 ## Workspace and startup
 
-Workspace: `/Users/ammarfaisal/Desktop/skillforge` on macOS, zsh. The workspace was not a Git repository at last inspection. Preserve existing work and user data.
+Workspace: `/Users/ammarfaisal/Desktop/skillforge` on macOS, zsh. The workspace is a Git repository with existing uncommitted work. Preserve existing work and user data.
 
 Backend terminal:
 
@@ -34,7 +34,7 @@ Read `frontend/AGENTS.md` and relevant bundled Next documentation under `fronten
 
 - Credentials are already configured in `backend/.env`. Never print the file or expose its key.
 - `GEMINI_MODEL=gemini-3.6-flash`, timeout 120 seconds, thinking level low.
-- User explicitly selected camera **0**; camera 1 is disabled. Keep `CAMERA_INDEX=0`.
+- Webcam remains the default source. Current tested mapping: **0** built-in, **1** HERO9 Black, **2** OBS Virtual Camera. Indexes can change; do not assume FFmpeg’s order matches OpenCV. Preserve the user’s existing startup settings.
 - Gemini 3.8 Flash repeatedly returned explicit provider high-demand 503 errors. User authorized testing another Flash model; 3.6 Flash succeeded. No silent model fallback.
 - Current saved skill: **PS5 Controller Disassembly**, ID `99c74657b9fd4b6197edbf1ab064fa80`, four real images and four Gemini-generated steps. User explicitly approved using all four images.
 - Learn URL: http://localhost:3000/?mode=learn&task=99c74657b9fd4b6197edbf1ab064fa80
@@ -68,7 +68,7 @@ Read `frontend/AGENTS.md` and relevant bundled Next documentation under `fronten
 
 Browser storage holds only reference browsing position and an opaque server session ID. Server sessions are in process memory: 30-minute idle expiry, maximum 32 sessions, oldest idle eviction. Restart resets progress and the UI explains that the old session expired. Latest reference/learner pair is kept only in memory; learner stills are not written to disk. Refresh resumes progress and feedback; refreshing during verification polls until completion.
 
-The backend stopped during the interrupted turn and was restarted while completing this handoff. Consequently the earlier successful live session (1/4) has reset to zero. Saved instructor tutorial/images remain intact. The final health check reports backend status OK but camera 0 currently unavailable (no frame); reconnect camera 0 in the app when the device is available. Do not switch to disabled camera 1.
+The backend stopped during the interrupted turn and was restarted while completing this handoff. Consequently the earlier successful live session (1/4) has reset to zero. Saved instructor tutorial/images remain intact. That historical check found camera 0 unavailable; later GoPro validation supersedes it (see follow-ups below). Query current camera status rather than treating a historical health check as live state.
 
 Image submission is intentional and disclosed in the UI. Browsing and camera preview do not call Gemini. Results are visible-state assessments, not proof of hidden mechanical/electrical correctness. No numerical confidence percentages.
 
@@ -102,6 +102,24 @@ Milestone 6 is complete: compact learner workspace, prominent Verify action, rea
 
 Milestone 7: two full physical instructor-to-learner runs, restart/reconnect/error recovery checks, backup demo recording and critical fixes. Coordinate physical controller positioning with the user; never fabricate visual outcomes or substitute saved images for the production camera.
 
-Milestone 8: concise 60–90-second demo script, pitch, honest limitations, Devpost draft and final setup docs. Publishing/sending submissions is separate from drafting.
+Milestone 8 is prepared: see the documentation pack below for the timed demo, pitch/Q&A, Devpost draft and setup guide. Publishing/sending submissions is separate from drafting.
 
 Never expose credentials, silently switch models, mark completion through browser flags, advance on uncertainty, record continuous video, delete user demonstrations, or claim untested reliability. Keep the existing teach → generate → learn → verify loop working throughout.
+
+## Native Ray-Bans camera extension
+
+`native/macos-camera/run.sh` builds/signs the Swift ScreenCaptureKit helper; continuous forwarding uses a single persistent SCStream (`WindowFrameStream.swift`), while snapshots use SCScreenshotManager; see its README and PLAN. No WhatsApp UI control: user requested CLI-only work and skipped the overlap test. Crop tested: `0.273,0.055,0.454,0.852`; select the actual call window each time. IDs change, and resizing stops capture.
+
+`ReceivedCamera` holds only the latest fresh JPEG-decoded frame with runtime upload lease, size/dimension/sequence/timestamp bounds. `CameraRouter` routes preview, Teach and Verify; USB remains the startup default, optionally `CAMERA_SOURCE=whatsapp`. POST `/api/camera/source` selects webcam or whatsapp. Native ingress lives at `/api/camera/whatsapp/start|frame|stop`, with read-only `/status`. Helpers accept loopback destinations only and reject redirects. Verify discards results after source/bridge changes.
+
+Real forwarding, preview, Teach capture and USB 0 switching passed. Verify selected-source content was tested with mocked Gemini (no additional live model request). 110 backend / 8 frontend / 36 Swift checks and production build passed. ScreenCaptureKit failure stops capture; staleness prevents fallback or frozen backend frame reuse. This cannot detect a remote video frozen inside WhatsApp.
+
+Persistent-stream follow-up: 250 real frames at 2 FPS over more than two minutes stayed fresh; graceful SIGTERM invalidated the frame and returned HTTP 503, then a helper restart restored capture. Repeated-screenshot errors described in native PLAN occurred before switching continuous forwarding to SCStream.
+
+GoPro follow-up: HERO9 Black is OpenCV index 1 on this device configuration. One failed AVFoundation read previously terminated the camera thread; fixed with bounded initial/ongoing retries while preserving three-second freshness. 113 backend tests pass. Restarted backend and verified 30 seconds of app-level live polling: 27 fresh JPEG responses, zero failures after startup, 1920 × 1080. GoPro source left selected; prior reports that camera 1 was disabled predate the GoPro connection.
+
+## Milestone 8 documentation pack
+
+Prepared `docs/DEMO_SCRIPT.md`, `docs/PITCH.md`, `docs/DEVPOST.md` and `docs/SETUP.md`, linked from README. The 90-second script explicitly uses saved checkpoints and a prepared real tutorial, with live assessments and branches that never promise a particular AI result. Devpost remains an unpublished draft with team/repo/video fields to supply; there is no public deployment or recorded backup yet. This work did not call Gemini, change application code, capture new images or mutate saved skills. Milestone 8 is checked in PLAN; milestone 7 still requires two complete physical runs and the backup recording. Do not claim an end-to-end rehearsal, measured educational impact, direct Meta SDK integration or uninterrupted background camera reliability.
+
+Preview FPS follow-up: serial JPEG preview now targets 15 FPS for USB/GoPro and 2 FPS for WhatsApp, using `/api/camera/frame?preview=true` (960-pixel maximum width, quality 80). Full-resolution checkpoint/Verify inputs remain unchanged. Request latency is included in each frame interval; failures back off for one second. 116 backend tests / eight frontend tests and typecheck pass. Restart/rebuild is needed to load the change; do not report measured 15 FPS without a live check.

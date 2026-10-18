@@ -15,8 +15,12 @@ class CameraSource(ABC):
     @abstractmethod
     def get_latest_frame(self): ...
 
-    def jpeg(self, quality=92):
-        ok, encoded = cv2.imencode('.jpg', self.get_latest_frame(), [cv2.IMWRITE_JPEG_QUALITY, quality])
+    def jpeg(self, quality=92, max_width=None):
+        frame = self.get_latest_frame()
+        if max_width is not None and frame.shape[1] > max_width:
+            height = max(1, round(frame.shape[0] * max_width / frame.shape[1]))
+            frame = cv2.resize(frame, (max_width, height), interpolation=cv2.INTER_AREA)
+        ok, encoded = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, quality])
         if not ok:
             raise CameraUnavailable('Could not encode camera frame.')
         return encoded.tobytes()
@@ -38,6 +42,8 @@ class OpenCVCamera(CameraSource):
             if self._thread and self._thread.is_alive():
                 return
             self._stop.clear()
+            with self._lock:
+                self._error = 'Waiting for the camera’s first frame.'
             self._thread = threading.Thread(target=self._capture, daemon=True)
             self._thread.start()
 
@@ -50,12 +56,20 @@ class OpenCVCamera(CameraSource):
                 raise CameraUnavailable(f'Camera {self.index} could not open. Check device index and macOS camera permission for your terminal.')
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+            # AVFoundation / virtual cameras can briefly miss a read during
+            # startup or delivery. A single miss is not a disconnection.
+            deadline = time.monotonic() + 5
             while not self._stop.is_set():
                 ok, frame = cap.read()
+                now = time.monotonic()
                 if not ok or frame is None or frame.size == 0:
-                    raise CameraUnavailable('Camera disconnected or returned no frame. Reconnect it and retry.')
+                    if now >= deadline:
+                        raise CameraUnavailable('Camera returned no fresh frames for several seconds. Check the device and reconnect it.')
+                    self._stop.wait(0.05)
+                    continue
+                deadline = now + 3
                 with self._lock:
-                    self._frame, self._updated, self._error = frame, time.monotonic(), None
+                    self._frame, self._updated, self._error = frame, now, None
                 self._stop.wait(1 / 30)
         except Exception as exc:
             with self._lock:

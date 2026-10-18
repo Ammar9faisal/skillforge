@@ -4,7 +4,16 @@
 
 ## Current state
 
-Milestones 1–4 are verified: camera capture, persistent Teach Mode, real Gemini tutorial generation, and Learn Mode with tutorial selection, camera preview, reference browsing, a skill timeline, saved browsing position and reset. The current saved PS5 Controller Disassembly demonstration has four real AI-generated steps. Milestone 5 implements real visual PASS/FAIL/UNCERTAIN verification; see the verification log in PLAN.md for live validation status.
+Milestones 1–6 are implemented and verified. Milestone 8’s demo script, pitch, Devpost draft and setup guide are prepared. Milestone 7 remains open: two complete physical runs, extended recovery checks and a backup recording. The saved PS5 Controller Disassembly demonstration has four real AI-generated steps. Camera support includes webcam/GoPro and the optional WhatsApp Ray-Ban window bridge; see PLAN.md for bounded test evidence and limitations.
+
+## Presentation and submission
+
+- [90-second demo script and fallback cues](docs/DEMO_SCRIPT.md)
+- [Pitch, impact framing and judge Q&A](docs/PITCH.md)
+- [Devpost draft and missing submission fields](docs/DEVPOST.md)
+- [Setup, daily launch and camera troubleshooting](docs/SETUP.md)
+
+The Devpost draft is not published. Team names, public repository and a real demo-video link still need to be supplied. No backup recording or public deployment is claimed.
 
 ## Setup (macOS, Python 3.11+, Node 20.9+)
 
@@ -13,7 +22,7 @@ Terminal 1, from the repository root:
 ```sh
 python3 -m venv backend/.venv
 backend/.venv/bin/pip install -r backend/requirements.txt
-cp backend/.env.example backend/.env
+if [ ! -f backend/.env ]; then cp backend/.env.example backend/.env; fi
 cd backend
 .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --timeout-graceful-shutdown 3
 ```
@@ -32,7 +41,7 @@ npm run dev
 
 Open http://localhost:3000. Device 0 is the default; select 1 and Reconnect to try an external USB camera. Camera selection applies to this backend session. Set `CAMERA_INDEX` in `backend/.env` for persistent selection. Disconnect errors appear in the interface; reconnect manually after reconnecting hardware. Frames older than three seconds are rejected.
 
-The local verification run found a working camera at device 1. Actual camera resolutions may differ from the requested resolution. The interface reports the actual dimensions.
+The built-in camera was verified at index 0. With the GoPro attached, HERO9 Black was verified at OpenCV index 1. Actual camera resolutions may differ from the requested resolution. The interface reports the actual dimensions.
 
 The backend reads `.env` from its working directory, so launch it from `backend/`. Frontend API override: copy `frontend/.env.example` to `frontend/.env.local`. Backend CORS allows `http://localhost:3000` and `http://127.0.0.1:3000`; adjust `FRONTEND_ORIGIN` if needed. Keep development servers bound to loopback.
 
@@ -236,3 +245,26 @@ The camera abstraction lives in `backend/app/services/camera.py`. Downstream ser
 ## Privacy
 
 Preview stays local; continuous video is not recorded. Tutorial generation sends intentional saved reference images, title, and instructor notes to Google's Gemini API after the interface disclosure is acknowledged. Verification sends one intentionally captured learner frame and its instructor reference to Google after the disclosure is acknowledged. The exact pair and latest assessment remain in backend memory for the learning session; learner frames are not written to disk. Only the latest pair is retained, and reset clears it. Use consenting participants. Credentials belong only in backend environment variables. Raw image contents, raw AI responses, and credentials are not logged by the application.
+
+
+## WhatsApp Ray-Bans camera
+
+The native macOS ScreenCaptureKit helper forwards a configurable crop of the incoming call video at 2 FPS. It supports explicit window selection and runs without foregrounding WhatsApp. Start the backend, then run from the repository root:
+
+```sh
+./native/macos-camera/run.sh stream --select --crop 0.273,0.055,0.454,0.852 --fps 2
+```
+
+Select **WhatsApp Ray-Bans** under **Source** in Teach or Learn. USB Webcam and camera 0 remain available. The crop above matches the tested call layout; inspect a snapshot before using another layout. See [native setup, crop, preview and recovery instructions](native/macos-camera/README.md) and [validation record](native/macos-camera/PLAN.md). The overlap test was skipped at the user’s request.
+
+### GoPro webcam troubleshooting
+
+A GoPro exposed through the GoPro Webcam utility uses the existing USB Webcam source. FFmpeg and OpenCV may enumerate devices in different orders; do not assume a number from FFmpeg is SkillForge’s index. On the tested Mac, OpenCV index 0 was FaceTime HD, 1 was HERO9 Black, and 2 was OBS Virtual Camera. These numbers can change with attached devices.
+
+GoPro / AVFoundation can occasionally return an empty read during startup or otherwise successful streaming. SkillForge waits up to five seconds for initial video and tolerates brief missed reads thereafter. Existing frames still expire after three seconds, and a sustained dropout stops the reader with an explicit error. Restart the backend after updating this code, then reconnect the selected device.
+
+### Live preview frame rate
+
+The browser uses serial, uncached JPEG requests rather than a long-lived multipart stream, following Safari painting failures during rehearsal. USB webcam / GoPro preview targets 15 FPS; WhatsApp Ray-Ban preview remains at 2 FPS. Preview requests use `/api/camera/frame?preview=true`, capped at 960 pixels wide with JPEG quality 80 to reduce encoding and transfer work. Requests never overlap; slower encoding, networking, camera delivery or browser rendering reduces the achieved rate. Failed requests back off for one second.
+
+Teach, Verify and the normal `/api/camera/frame` endpoint retain full capture resolution and JPEG quality 92. The MJPEG endpoint remains available for other clients. Restart both backend and frontend after this change; production frontend users must rebuild before `npm run start`. The 15 FPS value is a target, not a measured hardware guarantee.
