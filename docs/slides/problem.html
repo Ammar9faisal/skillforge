@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SkillForge — The Problem</title>
+<style>
+:root{color-scheme:dark;--bg:#080e14;--text:#edf5f8;--muted:#81909b;--cyan:#65eadb;--orange:#f3ac79}*{box-sizing:border-box}body{margin:0;background:#05090d;color:var(--text);font-family:Inter,"Helvetica Neue",Arial,sans-serif}.page{max-width:1440px;margin:auto;padding:28px}.shell{width:100%;background:var(--bg)}.slide{container-type:inline-size;aspect-ratio:16/9;position:relative;overflow:hidden;background:radial-gradient(ellipse at 24% 78%,#18323966,transparent 48%),radial-gradient(ellipse at 96% 0%,#16453d33,transparent 48%),var(--bg)}.slide:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 100px #0003}.grain{position:absolute;inset:0;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23fff' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E")}.brand{position:absolute;left:6%;top:6%;display:flex;gap:.75cqw;align-items:center;font-weight:700;font-size:1.45cqw;letter-spacing:-.06cqw}.brand svg{width:2cqw;color:var(--cyan)}.section{position:absolute;right:6%;top:7%;font-size:.8cqw;letter-spacing:.22cqw;color:var(--muted)}h1{position:absolute;left:6%;top:15.5%;margin:0;font-size:4.7cqw;font-weight:650;line-height:1.09;letter-spacing:-.2cqw;z-index:2}h1 span{color:var(--cyan)}.controller{position:absolute;left:4%;top:39%;width:54%;height:42%;filter:drop-shadow(0 18px 22px #0006)}.controller svg{width:100%;height:100%;overflow:visible}.desk{position:absolute;left:4%;top:79%;width:54%;height:1px;background:linear-gradient(90deg,transparent,#5a77846b,transparent)}.object-label{position:absolute;left:8%;top:83%;font-size:.86cqw;letter-spacing:.1cqw;color:#8c9ca7}.guide{position:absolute;left:66%;top:34%;width:26%;height:51%;background:#e7e8df;color:#222b2d;transform:rotate(5deg) translateY(18px);border-radius:2px;padding:2cqw 2.1cqw;box-shadow:-14px 17px 50px #0007;opacity:0;transition:opacity .7s,transform .7s}.guide:before{content:"";position:absolute;top:0;bottom:0;left:0;width:.5cqw;background:#b7c4bd}.guide .paper-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #9da8a1;padding-bottom:1cqw;font-size:.65cqw;font-weight:700;letter-spacing:.13cqw}.guide h2{font-size:1.9cqw;line-height:1.13;letter-spacing:-.05cqw;margin:1.25cqw 0 1cqw}.guide svg{width:100%;height:7cqw;margin:.2cqw 0 1cqw}.guide .step{font-size:.75cqw;font-weight:700;letter-spacing:.05cqw}.guide .instruction{font-size:1.05cqw;line-height:1.4;margin:.6cqw 0}.paper-line{height:.23cqw;background:#b8c1b9;margin-top:.55cqw;width:100%}.paper-line.short{width:65%}.guide.visible{opacity:1;transform:rotate(5deg) translateY(0)}.gap{position:absolute;left:54%;top:60%;width:10%;height:2px;background:repeating-linear-gradient(90deg,#4b626b 0 6px,transparent 6px 13px);opacity:0;transition:opacity .4s}.gap .cross{position:absolute;left:40%;top:-1.2cqw;display:grid;place-items:center;width:2.4cqw;height:2.4cqw;background:#101b22;border:1px solid #986b4c;border-radius:50%;font-size:1.5cqw;color:var(--orange)}.gap span:last-child{position:absolute;top:2cqw;left:0;width:100%;text-align:center;color:var(--orange);font-size:.76cqw;white-space:nowrap}.gap.visible{opacity:1}.stuck{position:absolute;left:9%;top:76%;padding:.65cqw 1.1cqw;border:1px solid #8b65474d;background:#241d18;color:#f1bc93;border-radius:99px;font-size:.82cqw;opacity:0;transform:translateY(10px);transition:opacity .4s,transform .4s}.stuck.visible{opacity:1;transform:translateY(0)}.stuck b{font-weight:400;color:#ffbd7f}.closing{position:absolute;left:6%;bottom:5.5%;font-size:1.18cqw;letter-spacing:-.02cqw;opacity:0;transition:opacity .5s}.closing strong{color:var(--cyan);font-weight:600}.closing.visible{opacity:1}.page-number{position:absolute;right:6%;bottom:6%;color:#586d79;font-size:.85cqw;letter-spacing:.12cqw}.caption{position:absolute;z-index:4;bottom:12%;left:12%;width:76%;text-align:center;font-size:1.28cqw;line-height:1.5;color:#fff;background:#05090de8;padding:.6cqw 1cqw;display:none}.caption.enabled{display:block}.progress{position:absolute;bottom:0;left:0;height:3px;background:var(--cyan);width:100%;z-index:5;box-shadow:0 0 12px #65eadb66}.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:18px 0;color:#9cb0bc;font-size:13px}button{font:inherit;color:#d8e5eb;border:1px solid #30434e;border-radius:6px;background:#12212a;padding:9px 14px;cursor:pointer}button:hover{background:#203641}button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}button.primary{background:var(--cyan);border-color:var(--cyan);color:#052623;font-weight:650}.seek{flex:1;min-width:120px;accent-color:var(--cyan)}.time{font-variant-numeric:tabular-nums;min-width:82px}label{display:flex;align-items:center;gap:7px}input[type=checkbox]{accent-color:var(--cyan)}details{margin-top:10px;border-top:1px solid #20313b;padding-top:18px;color:#a1b3be;font-size:14px;line-height:1.8}summary{cursor:pointer;color:#dae6ec}details p{max-width:850px}kbd{font:11px ui-monospace,monospace;border:1px solid #344751;padding:2px 5px;border-radius:3px}.hint{margin-left:auto;font-size:11px;color:#728792}.shell:fullscreen{display:grid;place-items:center;background:var(--bg)}.shell:fullscreen .slide{width:min(100vw,177.777778vh)}@media(max-width:650px){.page{padding:10px}.hint{display:none}.controls{gap:8px;font-size:11px}button{padding:8px 10px}.seek{min-width:100px}details{font-size:13px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}.controller{filter:none}}
+</style>
+</head>
+<body>
+<main class="page">
+<section class="shell" id="screen" aria-label="SkillForge problem slide">
+<div class="slide" id="slide">
+<div class="grain" aria-hidden="true"></div>
+<div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2 21 7v10l-9 5-9-5V7zM3 7l9 5 9-5M12 12v10M7 4.8l10 14.4M17 4.8 7 19.2"/></svg>SkillForge</div>
+<div class="section">01 / THE PROBLEM</div>
+<h1>Repair guides can’t<br><span>see your mistakes.</span></h1>
+<div class="desk" aria-hidden="true"></div>
+<div class="controller" role="img" aria-label="Illustration of a DualSense-style controller resting on a desk">
+<svg viewBox="0 0 700 370" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="shell" x1="0" y1="0" x2="0.5" y2="1"><stop stop-color="#fff"/><stop offset=".5" stop-color="#c3ced1"/><stop offset="1" stop-color="#809197"/></linearGradient><linearGradient id="black" x1="0" y1="0" x2="0.3" y2="1"><stop stop-color="#343f48"/><stop offset="1" stop-color="#11171e"/></linearGradient><radialGradient id="stick"><stop stop-color="#37444b"/><stop offset=".72" stop-color="#1e2930"/><stop offset="1" stop-color="#0b1218"/></radialGradient></defs>
+<ellipse cx="350" cy="325" rx="260" ry="23" fill="#000" opacity=".4"/>
+<path d="M155 82q-18-26 18-36l81-9q20-1 25 28M545 82q18-26-18-36l-81-9q-20-1-25 28" fill="#19242c" stroke="#6a7a83" stroke-width="2"/>
+<path d="M170 61Q111 59 88 131L54 272q-12 61 31 64 25 0 54-48l54-76q14-18 45-19h224q31 1 45 19l54 76q29 48 54 48 43-3 31-64l-34-141q-23-72-82-70l-93 15H263Z" fill="url(#shell)" stroke="#acbdc4" stroke-width="2"/>
+<path d="m247 74 31 14h144l31-14 35 89-36 77H248l-36-77Z" fill="url(#black)"/>
+<path d="M277 83h146l8 73q-77 24-162 0Z" fill="#28343c" stroke="#667782" stroke-width="2"/>
+<path d="m247 76 22 81M453 76l-22 81" fill="none" stroke="#6de9e2" stroke-width="3" opacity=".9"/>
+<g fill="#28363e" stroke="#80939e" stroke-width="1.2"><path d="M165 103h23v24h24v23h-24v24h-23v-24h-24v-23h24Z"/><circle cx="522" cy="105" r="13"/><circle cx="553" cy="137" r="13"/><circle cx="491" cy="137" r="13"/><circle cx="522" cy="168" r="13"/></g>
+<g fill="none" stroke="#a9c8cc" stroke-width="1.5"><path d="m522 98-6 11h12Z"/><circle cx="553" cy="137" r="6"/><rect x="486" y="132" width="10" height="10"/><path d="m517 163 10 10m0-10-10 10"/></g>
+<g fill="url(#stick)" stroke="#4d6069" stroke-width="2"><circle cx="272" cy="207" r="36"/><circle cx="428" cy="207" r="36"/></g><g fill="none" stroke="#41535d" stroke-width="2"><circle cx="272" cy="207" r="25"/><circle cx="428" cy="207" r="25"/></g>
+<g fill="#657680"><circle cx="332" cy="178" r="2"/><circle cx="343" cy="178" r="2"/><circle cx="354" cy="178" r="2"/><circle cx="365" cy="178" r="2"/><circle cx="337" cy="188" r="2"/><circle cx="348" cy="188" r="2"/><circle cx="359" cy="188" r="2"/></g><path d="m341 214 10-8 9 8-9 9Z" fill="#73868e"/><rect x="333" y="240" width="36" height="5" rx="2.5" fill="#5f747e"/>
+<path d="M91 255q4 34 16 44M609 255q-4 34-16 44" stroke="#fff" opacity=".3" fill="none" stroke-width="3"/>
+</svg>
+</div>
+<div class="object-label">YOUR REPAIR. YOUR WORKSPACE.</div>
+<div class="guide" id="guide" aria-label="Illustration of a traditional repair guide">
+<div class="paper-top"><span>REPAIR MANUAL</span><span>03 / 12</span></div>
+<h2>DualSense<br>controller repair</h2>
+<svg viewBox="0 0 240 100" fill="none" stroke="#61716b" stroke-width="2" aria-hidden="true"><path d="M67 21q-21-3-30 24L24 80q-4 16 8 16l33-34h110l33 34q12 0 8-16l-13-35q-9-27-30-24l-21 8H88Z"/><rect x="88" y="27" width="64" height="24" rx="3"/><circle cx="87" cy="64" r="11"/><circle cx="153" cy="64" r="11"/><path d="M57 31v21M46 42h22M183 31v21M172 42h22M86 82l-10 13h88l-10-13M120 67v12" stroke-dasharray="3 3"/></svg>
+<div class="step">STEP 03</div><p class="instruction">Remove the front trim.</p><div class="paper-line"></div><div class="paper-line"></div><div class="paper-line short"></div>
+</div>
+<div class="gap" id="gap" aria-hidden="true"><span class="cross">×</span><span>No feedback</span></div>
+<div class="stuck" id="stuck"><b>●</b> &nbsp; STUCK HALFWAY THROUGH</div>
+<div class="closing" id="closing">That’s where <strong>SkillForge</strong> comes in.</div>
+<div class="caption" id="caption" aria-live="off"></div>
+<div class="page-number">00:00 — 00:15</div><div class="progress" id="progress"></div>
+</div>
+</section>
+<div class="controls" aria-label="Slide playback controls">
+<button class="primary" id="play">Play 15s intro</button><button id="replay" aria-label="Restart introduction">Replay</button>
+<input class="seek" id="seek" type="range" min="0" max="15" step="0.05" value="15" aria-label="Timeline in seconds">
+<span class="time" id="time">0:15 / 0:15</span><label><input type="checkbox" id="captions">Captions</label><button id="fullscreen">Full screen</button>
+<span class="hint"><kbd>Space</kbd> play/pause &nbsp; <kbd>R</kbd> replay &nbsp; <kbd>F</kbd> full screen</span>
+</div>
+<details><summary>Voiceover script · read live</summary><p>“Have you ever tried fixing something using an online tutorial, only to get stuck halfway through?</p><p>Repair guides can show us what to do, but they can't see when we're doing something wrong.</p><p>That's where SkillForge comes in.”</p><p>This slide is silent. The controller and guide are illustrations. Open full screen for presenting; press Escape to leave full screen.</p></details>
+</main>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+let elapsed = 15, playing = false, last = null, frame = null;
+const script = ["Have you ever tried fixing something using an online tutorial, only to get stuck halfway through?", "Repair guides can show us what to do, but they can't see when we're doing something wrong.", "That's where SkillForge comes in."];
+function render(){
+$('guide').classList.toggle('visible',elapsed >= 3);
+$('stuck').classList.toggle('visible',elapsed >= 6);
+$('gap').classList.toggle('visible',elapsed >= 8);
+$('closing').classList.toggle('visible',elapsed >= 12);
+$('progress').style.width = `${elapsed / 15 * 100}%`;
+$('seek').value = elapsed;
+$('time').textContent = `0:${String(Math.floor(elapsed)).padStart(2,'0')} / 0:15`;
+$('play').textContent = playing ? 'Pause' : elapsed >= 15 ? 'Play 15s intro' : 'Continue';
+$('play').setAttribute('aria-pressed',String(playing));
+$('caption').textContent = script[elapsed < 6 ? 0 : elapsed < 12 ? 1 : 2];
+}
+function tick(now){if(!playing)return;if(last !== null)elapsed=Math.min(15,elapsed+(now-last)/1000);last=now;if(elapsed>=15){playing=false;last=null;frame=null;render();return}render();frame=requestAnimationFrame(tick)}
+function pause(){playing=false;last=null;if(frame !== null)cancelAnimationFrame(frame);frame=null;render()}
+function play(restart=false){pause();if(restart || elapsed >= 15)elapsed=0;playing=true;last=null;render();frame=requestAnimationFrame(tick)}
+$('play').addEventListener('click',()=>playing?pause():play());
+$('replay').addEventListener('click',()=>play(true));
+$('seek').addEventListener('input',event=>{const value=Number(event.target.value);pause();elapsed=value;render()});
+$('captions').addEventListener('change',event=>$('caption').classList.toggle('enabled',event.target.checked));
+async function fullscreen(){try{if(document.fullscreenElement)await document.exitFullscreen();else await $('screen').requestFullscreen()}catch{ $('fullscreen').textContent='Use your browser’s full-screen menu'; }}
+$('fullscreen').addEventListener('click',fullscreen);
+document.addEventListener('keydown',event=>{if(event.target.matches('input,button,summary'))return;if(event.code==='Space'){event.preventDefault();playing?pause():play()}if(event.key.toLowerCase()==='r')play(true);if(event.key.toLowerCase()==='f')fullscreen()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden && playing)pause()});
+render();
+})();
+</script>
+</body>
+</html>

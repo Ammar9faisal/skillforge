@@ -111,3 +111,7 @@ Live app-level validation after restart: index 1 stayed available at 1920 × 108
 ### Preview FPS follow-up — October 18, 2026
 
 The milestone 7 browser workaround waited 500 ms after every full-resolution JPEG request, limiting all camera previews to under 2 FPS. USB / GoPro preview now targets 15 FPS, subtracting request time from the frame interval; WhatsApp preview stays at 2 FPS. A preview-only JPEG option reduces width to at most 960 pixels and quality to 80 without changing Teach/Verify input resolution. Three new regression cases verify landscape/portrait resizing, no upscaling, unchanged full-size output and source-frame preservation. All 116 backend tests and eight frontend tests pass; TypeScript checks pass. Servers remain stopped following the user’s shutdown request; live FPS is not measured by these tests.
+
+### Ray-Ban preview framing fix — October 18, 2026
+
+Removed conflicting intrinsic image-sizing workarounds left from MJPEG preview. The camera image now has explicit viewport bounds and `object-fit: contain`, keeping the entire portrait or landscape received frame visible with letterboxing instead of clipping overflow. This changes only preview layout, not incoming capture crop or Teach/Verify images. Stylesheet parsing and TypeScript checks pass. The helper was stopped and no call window was available for live validation; crop metadata still refers to the historical layout-specific `0.273,0.055,0.454,0.852` crop. If the call layout changes, that crop must be rechecked against a fresh full-window snapshot.
