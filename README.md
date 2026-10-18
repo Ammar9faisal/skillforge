@@ -4,7 +4,7 @@
 
 ## Current state
 
-Milestones 1–4 are verified: camera capture, persistent Teach Mode, real Gemini tutorial generation, and Learn Mode with tutorial selection, camera preview, reference browsing, a skill timeline, saved browsing position and reset. The saved Wallet Phone demonstration has four real AI-generated steps. Milestone 5 implements real visual PASS/FAIL/UNCERTAIN verification; see the verification log in PLAN.md for live validation status.
+Milestones 1–4 are verified: camera capture, persistent Teach Mode, real Gemini tutorial generation, and Learn Mode with tutorial selection, camera preview, reference browsing, a skill timeline, saved browsing position and reset. The current saved PS5 Controller Disassembly demonstration has four real AI-generated steps. Milestone 5 implements real visual PASS/FAIL/UNCERTAIN verification; see the verification log in PLAN.md for live validation status.
 
 ## Setup (macOS, Python 3.11+, Node 20.9+)
 
@@ -155,6 +155,21 @@ Manual milestone 5 checklist:
 - Reset; confirm zero progress and cleared feedback, with instructor data unchanged.
 - Test unavailable camera, missing reference, provider timeout/quota and invalid output: explicit errors, no fabricated assessment or progress.
 - Restart the backend; confirm the session restarts at zero with an explanation.
+
+## Visual polish (Milestone 6)
+
+Learn Mode prioritizes the active instruction and Verify action, with readable criteria and references beneath. Wide screens retain the three-section workspace and a sticky timeline; narrower layouts stack sections and preserve navigation. Completed steps use checkmarks, active steps have a subtle pulse, and previews remain explicitly labeled. The live camera HUD uses a restrained scan sweep and a contrasting status strip; this decoration does not imply AI analysis of the continuous stream.
+
+Verification feedback spans the workspace with distinct status icons, text and colors, expected/observed evidence, and a highlighted next action. **Inspect images** opens a larger comparison of the exact submitted image pair. It stacks the images on narrow screens and supports a labeled Close control and Escape. The learner image is explicitly labeled as a captured still. Session opening, assessment and reset show different loading messages. Motion is disabled for `prefers-reduced-motion: reduce`, and keyboard focus remains visible.
+
+Manual polish checks:
+
+- Review Dashboard, Teach and Learn navigation; the current page is indicated accessibly.
+- Review Learn Mode at laptop widths and a narrow phone viewport; controls, long titles, criteria, timeline and feedback should wrap without clipping.
+- Run a real verification; confirm the feedback names its assessed step and progress follows the backend result.
+- Open Inspect images, compare A/B labels and image content, close with the button and Escape, and confirm focus returns to the invoking control.
+- Confirm privacy disclosure, offline hints, preview hints, and session/reset/assessment loading labels remain explicit.
+- Enable the operating system’s reduced-motion preference and confirm HUD, active-step and feedback animations stop.
 
 ## Manual milestone 4 checklist
 

@@ -7,7 +7,7 @@ Implement and test one milestone at a time. Never simulate live AI results.
 - [x] 3. Generate: configured accessible Gemini model, validated structured tutorial, controlled retry.
 - [x] 4. Learn: tutorial selection, reference, session progress and reset.
 - [x] 5. Verify: real image comparison, PASS/FAIL/UNCERTAIN, advance only on PASS.
-- [ ] 6. Polish: responsive HUD, comparison, accessible loading and errors.
+- [x] 6. Polish: responsive HUD, comparison, accessible loading and errors.
 - [ ] 7. Reliability: focused automated tests, two real end-to-end runs, backup demo.
 - [ ] 8. Pitch: honest limitations, demo script, Devpost draft and setup documentation.
 
@@ -72,3 +72,19 @@ Implement and test one milestone at a time. Never simulate live AI results.
 - User positioned the assembled controller for camera 0. Safari's actual Verify step captured the live camera and returned PASS, advanced step 1 to step 2, and displayed 1/4 verified with the exact image pair. Refresh restored progress and the real last assessment. Step 4 preview kept step 2 active and disabled Verify. The user's live session was left at step 2.
 - 84 backend tests and 8 frontend session tests pass, alongside TypeScript checks and production build. Tests cover complete progression/reset/resume, all three outcomes, low confidence, invalid output/retry, missing camera/reference/key, timeout/quota/503 sanitization, duplicate/in-flight reset/task changes, expiry, and client status/step injection. Existing Starlette test-client deprecation warning remains.
 - README documents routes, privacy, temporary session storage, error recovery and the manual verification checklist. No blockers for Milestone 5. Next: Milestone 6 visual polish; two complete consecutive physical runs and backup recording remain Milestone 7.
+
+### Handoff follow-up — October 17, 2026
+
+- Added HANDOFF.md for Copilot with architecture, configuration (no secrets), startup/check commands, verification evidence and remaining milestones.
+- The backend had stopped during the interrupted turn; restarted it. In-memory learning progress reset as designed. Saved controller references and tutorial remain intact.
+
+### Milestone 6 — verified October 17, 2026
+
+- Refined the learner workspace with compact heading/navigation, a prominent Verify action before the reference, larger instruction/criteria text, clearer session details and a sticky wide-screen timeline. Narrow layouts wrap navigation, stack panels and preserve usable controls.
+- Feedback now spans the workspace and distinguishes PASS/FAIL/UNCERTAIN using icons, text and color. Expected and observed evidence are separated; the suggested next action is highlighted. Step/model/time/confidence and visual-only limitations remain explicit.
+- Added Inspect images: a native modal with the exact A/B evidence, larger side-by-side images on wide screens, stacked images on narrow screens, a named Close control, focus handling and native Escape dismissal.
+- Added restrained live-camera sweep, active-step pulse, verified checkmarks and feedback entrance. These animations do not imply continuous inference. Reduced-motion styles suppress animations/transitions. Preserved Safari's intrinsic camera-image sizing and the existing backend protocol.
+- Distinguished session opening, verification and reset loading labels; offline, missing disclosure and preview-disabled states explain the next action. Added semantic current-page navigation and visible keyboard focus.
+- Safari reviewed the saved controller tutorial at laptop and 390-pixel narrow viewports. A fresh real camera/Gemini verification returned UNCERTAIN because the controller was absent, showed the specific feedback and exact image pair, and kept step 1 active at 0/4. Enlarged comparison displayed both real images; Escape dismissal was verified at laptop size and the named Close control at narrow size. No fake assessments were introduced.
+- 84 backend tests and 8 frontend tests pass. TypeScript and production build pass. No backend behavior or dependencies changed. Existing Starlette test-client deprecation warning remains.
+- Updated README and Copilot handoff. No blockers for Milestone 6. Next: Milestone 7, two complete physical runs, restart/reconnect/error checks and a backup demo recording; those reliability checks are still outstanding.
